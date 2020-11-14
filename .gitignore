@@ -866,3 +866,4 @@ docker-stack.yml
 /back/auth/sample-cookiecutter-config-file.yml
 skeleton/*
 !/ml/bin/
+!/ml/scripts/
