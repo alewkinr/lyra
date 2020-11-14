@@ -5,11 +5,10 @@ from sqlalchemy.orm import Session
 
 from auth import crud, schemas
 from auth.api import deps
-from auth.core import security
+from auth.core import errors, security
 from auth.core.auth import OAuth2PasswordBearerWithCookie
 from auth.core.config import settings
-from fastapi import (APIRouter, Depends, HTTPException, Request, Response,
-                     status)
+from fastapi import APIRouter, Depends, Request, Response, status
 from fastapi.security import OAuth2PasswordRequestForm
 
 router = APIRouter()
@@ -27,15 +26,10 @@ def login(
         db, email=form_data.username, password=form_data.password
     )
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Введен некорректный email или пароль",
-        )
+        raise errors.BadRequestErr(detail="wrong username or password")
 
     elif not crud.user.is_active(user):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Аккаунт неактивен"
-        )
+        raise errors.BadRequestErr(detail="account is inactive")
 
     expires_delta = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     jwt_access_token = security.create_access_token(
@@ -43,14 +37,14 @@ def login(
         expires_delta=expires_delta,
     )
 
-    response = Response(status_code=status.HTTP_200_OK, content={"id": user.id})
-    response.set_cookie(
+    resp = Response(status_code=status.HTTP_200_OK, content={"id": user.id})
+    resp.set_cookie(
         key=schemas.TokenCookies.ACCESS_TOKEN.value,
         value=jwt_access_token,
         expires=expires_delta.seconds,
         path="/",
     )
-    return response
+    return resp
 
 
 @router.get("/status", response_model=schemas.TokenValid)
@@ -59,8 +53,6 @@ def validate_token(req: Request) -> Any:
 
     token = _reusable_OAuth(request=req)
     if not token:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized"
-        )
+        raise errors.NotAuthorizedErr()
 
     return {"status": True}
