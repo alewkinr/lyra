@@ -1,4 +1,4 @@
-from typing import Any, Callable, List
+from typing import Any, Callable, Dict, Optional
 
 
 class LyraTrackerManager:
@@ -7,13 +7,14 @@ class LyraTrackerManager:
     _model: Any = None
     _model_name: str = None
     _model_version: str = None
-    _trackers: List[Callable] = None
+    #  todo: доработать тип трэкера, чтобы ML специалист создавал именно их
+    _trackers: Dict[str, Callable] = None
 
     def __init__(
         self,
         model: Any,
         name: str,
-        ops: List[Callable],
+        ops: Dict[str, Callable],
         version: str = "undefined",
     ):
         """ Сохраняем модель в структуру """
@@ -21,10 +22,9 @@ class LyraTrackerManager:
         self._model_name = name
         self._model_version = version
 
-        _ops = []
-        for o in ops:
-            if o is not None:
-                _ops.append(o)
+        _ops: Dict[str, Callable] = {}
+        for k, v in ops:
+            _ops[k] = v
 
         self._trackers = _ops
 
@@ -38,7 +38,7 @@ class LyraTrackerManager:
         return self._model_version
 
     @property
-    def trackers(self):
+    def trackers(self) -> Optional[Dict[str, Callable]]:
         """
         Запускаем трекеры
         Идея очень простая: мы даем пачку методов, которые будем запускать из экзекьютора
