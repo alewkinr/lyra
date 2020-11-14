@@ -867,3 +867,5 @@ docker-stack.yml
 skeleton/*
 !/ml/scripts/
 !/ml/bin/.gitkeep
+/ml/data/aggregates.csv
+/ml/data/transactions.csv
