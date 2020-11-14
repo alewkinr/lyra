@@ -309,7 +309,7 @@ publish/
 
 # Microsoft Azure Web App publish settings. Comment the next line if you want to
 # checkin your Azure Web App publish settings, but sensitive information contained
-# in these scripts will be unencrypted
+# in these tools will be unencrypted
 PublishScripts/
 
 # NuGet Packages
@@ -334,7 +334,7 @@ csx/
 ecf/
 rcf/
 
-# Windows Store app package directories and files
+# Windows Store app_1 package directories and files
 AppPackages/
 BundleArtifacts/
 Package.StoreAssociation.xml
@@ -852,3 +852,15 @@ ipython_config.py
 # Local History for Visual Studio Code
 .history/
 .idea
+__pycache__
+app.egg-info
+.mypy_cache
+.coverage
+htmlcov
+.vscode
+.mypy_cache
+docker-stack.yml
+.cache
+/back/auth/cookiecutter-config-file.yml
+/back/auth/pyproject.toml
+/back/auth/sample-cookiecutter-config-file.yml
