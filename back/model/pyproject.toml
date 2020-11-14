@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "{{ SERVICE_NAME }}-service"
+name = "model-service"
 version = "0.1.0"
 description = ""
 authors = ["Ramil Aleshkin <alewkinr@gmail.com>"]
