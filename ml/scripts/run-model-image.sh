@@ -12,8 +12,8 @@ if [ -z "$TAG" ]; then
 fi
 
 # for now all images saves in ml/bin directory
-docker build $(pwd)/bin/ --build-arg MODEL_FILE_NAME=$MODEL -t $REGISTRY/$MODEL -f $(pwd)/scripts/scratch/Dockerfile
+docker build ./runner --build-arg MODEL_NAME=$MODEL --build-arg VERSION=$TAG -t $REGISTRY/$MODEL
 docker tag $REGISTRY/$MODEL $REGISTRY/$MODEL:$TAG
-docker push $REGISTRY/$MODEL:$TAG
+#docker push $REGISTRY/$MODEL:$TAG
 
 
