@@ -1,0 +1,4 @@
+FROM scratch
+
+ARG MODEL_FILE_NAME
+COPY $MODEL_FILE_NAME /model
