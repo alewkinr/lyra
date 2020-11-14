@@ -865,3 +865,4 @@ docker-stack.yml
 /back/auth/pyproject.toml
 /back/auth/sample-cookiecutter-config-file.yml
 skeleton/*
+!/ml/bin/
