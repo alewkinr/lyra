@@ -7,12 +7,8 @@ import pandas as pd
 from lyra_observer import LyraMetrics
 from lyra_tracker import LyraTrackerManager
 
-# MODEL_BINARY_PATH = "/service/model"
-# DATA_TMP_PATH = "/data"
-
-# debug
-MODEL_BINARY_PATH = "/Users/ramil/tech/python/web/digital-breakthrough-2020/ml/bin/extra_trees_classifier"
-DATA_TMP_PATH = "./data"
+MODEL_BINARY_PATH = "/service/model"
+DATA_TMP_PATH = "/data"
 
 
 # Логгеры данных

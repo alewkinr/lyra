@@ -13,7 +13,7 @@ COPY --from=model /model /service/model
 
 RUN  pip install -r /service/requirements.txt
 
-CMD ["python", "-c", "/service/main.py"]
+CMD ["python", "/service/main.py"]
 
 
 
