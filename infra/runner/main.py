@@ -7,12 +7,8 @@ import pandas as pd
 from lyra_observer import LyraMetrics
 from lyra_tracker import LyraTrackerManager
 
-# MODEL_BINARY_PATH = "/service/model"
-# DATA_TMP_PATH = "/data"
-
-# debug
-MODEL_BINARY_PATH = "/Users/ramil/tech/python/web/digital-breakthrough-2020/ml/bin/extra_trees_classifier"
-DATA_TMP_PATH = "./data"
+MODEL_BINARY_PATH = "/service/model"
+DATA_TMP_PATH = "/data"
 
 
 # Логгеры данных
@@ -66,7 +62,6 @@ def init(m: LyraTrackerManager):
             metric.counter(metric_name=k, value=tracking_metric)
             metric.set(metric_name=k, value=tracking_metric)
             metric.observe(metric_name=k, value=tracking_metric)
-
     except Exception as err:
         logging.error(f"error to init lyra runner {err}")
 
@@ -74,4 +69,7 @@ def init(m: LyraTrackerManager):
 if __name__ == "__main__":
     with open(MODEL_BINARY_PATH, "rb") as f:
         model: LyraTrackerManager = pickle.load(f)
-    init(model)
+
+    # эмулируем real-time
+    while True:
+        init(model)
