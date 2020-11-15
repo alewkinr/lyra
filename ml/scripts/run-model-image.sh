@@ -14,6 +14,6 @@ fi
 # for now all images saves in ml/bin directory
 docker build ./runner --build-arg MODEL_NAME=$MODEL --build-arg VERSION=$TAG -t $REGISTRY/$MODEL
 docker tag $REGISTRY/$MODEL $REGISTRY/$MODEL:$TAG
-#docker push $REGISTRY/$MODEL:$TAG
+docker push $REGISTRY/$MODEL:$TAG
 
 

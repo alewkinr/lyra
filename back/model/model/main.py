@@ -22,4 +22,4 @@ app.include_router(v1, prefix=settings.API_V1_STR)
 
 if __name__ == "__main__":
     # TODO: fix before release
-    uvicorn.run(app, host="0.0.0.0", port=8081)
+    uvicorn.run(app, host="0.0.0.0", port=8080)
