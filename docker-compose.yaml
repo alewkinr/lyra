@@ -82,7 +82,7 @@ services:
       - monitor-net
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.auth.rule=Host(`178.154.232.207`)"
+      - "traefik.http.routers.auth.rule=Host(`178.154.232.207`) && Path(`/auth`)"
       - "traefik.http.routers.auth.entrypoints=web"
 
   # сервис моделей

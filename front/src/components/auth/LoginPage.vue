@@ -58,6 +58,11 @@ export default {
       return this.$store.getters.isAuthenticated;
     },
   },
+  watch: {
+    authState() {
+      this.checkRedirect()
+    }
+  },
   methods: {
     authRedirect() {
       this.$router.push("/models");
