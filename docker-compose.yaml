@@ -34,7 +34,7 @@ services:
       - monitor-net
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.ui.rule=Host(`178.154.232.207`)"
+      - "traefik.http.routers.ui.rule=Host(`*`)"
       - "traefik.http.routers.ui.middlewares=cors@file"
       - "traefik.http.routers.ui.entrypoints=web"
 
@@ -84,7 +84,8 @@ services:
       - monitor-net
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.auth.rule=Host(`178.154.232.207`) && Path(`/auth`)"
+      - "traefik.http.routers.auth.rule=Host(`*`) && PathPrefix(`/auth`)"
+      - "traefik.http.routers.auth.middlewares=cors@file,stripprefix@file"
       - "traefik.http.routers.auth.entrypoints=web"
 
   # сервис моделей
@@ -119,7 +120,7 @@ services:
       - monitor-net
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.model.rule=Host(`178.154.232.207`) && Path(`/model`)"
+      - "traefik.http.routers.model.rule=Host(`*`) && PathPrefix(`/model`)"
       - "traefik.http.routers.model.middlewares=cors@file,stripprefix@file"
       - "traefik.http.routers.model.entrypoints=web"
 
@@ -146,7 +147,7 @@ services:
       - monitor-net
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.prometheus.rule=Host(`178.154.232.207`) && Path(`/prometheus`)"
+      - "traefik.http.routers.prometheus.rule=Host(`*`) && PathPrefix(`/prometheus`)"
       - "traefik.http.routers.prometheus.middlewares=cors@file,stripprefix@file"
       - "traefik.http.routers.prometheus.entrypoints=web"
 

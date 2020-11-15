@@ -189,7 +189,8 @@
       >
         Метрики
       </div>
-      <ChartCard v-for="i in 3" :key="i" title="Коэффициент Джини"></ChartCard>
+      <ChartCard v-for="i in 1" :key="i" title="Коэффициент Джини"></ChartCard>
+      <ChartCard v-for="(chart, index) in charts" :key="index" :title="chart.name" :content="chart"></ChartCard>
     </div>
   </div>
 </template>
@@ -198,6 +199,7 @@
 import ChartCard from "./ChartCard";
 import HistoryCard from './HistoryCard'
 import TestCard from "./TestCard"
+import api from "../../api/prometheus";
 export default {
   components: {
     ChartCard,
@@ -239,6 +241,7 @@ export default {
           name: "История",
         },
       ],
+      charts: []
     };
   },
   methods: {
@@ -256,6 +259,21 @@ export default {
       return classes;
     },
   },
+  mounted() {    
+    api.data().then((data) => {
+      let items = data.data.data.result
+      console.log(items)
+      items.forEach((item) => {
+          console.log(item)
+          this.charts.push({
+              name: item.metric.metric_name,
+              cols: this.$_.map(item.values, (item) => {return item[0]}),
+              vals: this.$_.map(item.values, (item) => {return item[1]})
+          })
+      })
+      console.log(this.charts)
+    });
+  }
 };
 </script>
 
