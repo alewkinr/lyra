@@ -1,4 +1,5 @@
 // import shop from '../../api/shop'
+import _ from 'lodash';    
 
 // initial state
 // shape: [{ id, quantity }]
@@ -8,7 +9,11 @@ const state = () => ({
 
 // getters
 const getters = {
-  
+  model: (state) => {
+    return (id) => {
+      _.find(state.items, {id: id})
+    }
+  }
 }
 
 // actions

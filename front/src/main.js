@@ -5,6 +5,8 @@ import store from "./store";
 import router from "./router";
 import Axios from "axios";
 
+import _ from 'lodash';    
+Object.defineProperty(Vue.prototype, '$_', { value: _ });
 
 import './assets/css/tailwind.css'
 import './assets/fonts/stylesheet.css'
