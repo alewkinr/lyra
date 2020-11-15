@@ -1,6 +1,8 @@
 DOCKER_REGISTRY="docker.pkg.github.com/alewkinr/lyra/"
 SERVICE_NAME?=service
 
+start:
+	docker-compose up -d --build
 generate:
 	grep -r -l '{{SERVICE_NAME}}' . | grep -v "Makefile" | xargs sed -i -e 's/{{SERVICE_NAME}}/$(SERVICE_NAME)/g'
 	find . -name '*.*-e' -exec rm {} +

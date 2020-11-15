@@ -23,8 +23,8 @@ class LyraTrackerManager:
         self._model_version = version
 
         _ops: Dict[str, Callable] = {}
-        for k, v in ops:
-            _ops[k] = v
+        for k in ops:
+            _ops[k] = ops[k]
 
         self._trackers = _ops
 

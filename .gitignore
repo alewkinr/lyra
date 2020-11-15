@@ -869,3 +869,6 @@ skeleton/*
 !/ml/bin/.gitkeep
 /ml/data/aggregates.csv
 /ml/data/transactions.csv
+/front/
+/infra/metrics/prometheus/
+/infra/postgres/

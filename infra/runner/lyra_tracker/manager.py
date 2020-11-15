@@ -1,4 +1,6 @@
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, Optional
+
+import pandas as pd
 
 
 class LyraTrackerManager:
@@ -32,6 +34,11 @@ class LyraTrackerManager:
     def name(self):
         """ Геттер для названия """
         return self._model_name
+
+    @property
+    def model(self):
+        """ Геттер для модели """
+        return self._model
 
     @property
     def version(self):
