@@ -1,7 +1,10 @@
 api:
   dashboard: true
+  insecure: true
 
 providers:
+  file:
+    directory: /etc/traefik/dynamic
   docker:
     exposedByDefault: false
 
@@ -15,33 +18,3 @@ entryPoints:
   web:
     address: ":80"
 
----
-http:
-  middlewares:
-    auth:
-      forwardAuth:
-        address: "http://auth:8080/api/v1/sessions/status"
-
-
-    stripprefix:
-      stripPrefixRegex:
-        regex:
-          - "/[a-z\\d-]+/"
-
-    cors:
-      headers:
-        accessControlAllowMethods:
-          - GET
-          - POST
-          - DELETE
-          - PATCH
-          - HEAD
-          - OPTIONS
-          - PUT
-        accessControlAllowHeaders:
-          - "*"
-        accessControlAllowOriginList:
-          - localhost
-          - http://178.154.232.207
-        accessControlMaxAge: 1000
-        addVaryHeader: true
