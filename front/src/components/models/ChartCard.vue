@@ -3,22 +3,25 @@
     class="w-full p-5 bg-white rounded border border-maingray space-y-4 shadow h-400px"
   >
     <div class="pl-5 text-textblack text-lg font-semibold">
-      {{title}}
+      {{ title }}
     </div>
-    <line-chart :chart-data="datacollection" :styles="chartStyles" :options="options"></line-chart>
+    <line-chart
+      :chart-data="datacollection"
+      :styles="chartStyles"
+      :options="options"
+    ></line-chart>
     <div class="flex justify-center items-center w-full">
       <div class="border rounded-3xl">
         <button
-            class="period-selector rounded-3xl hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 "
-            v-for="(tab, index) in periods"
-            :key="tab.key"
-            :class="getTabClass(tab, index)"
-            @click="activeTab = tab.key"
-          >
-            {{ tab.name }}
-          </button>
+          class="period-selector rounded-3xl hover:bg-gray-400 text-gray-800 font-medium py-2 px-4"
+          v-for="(tab, index) in periods"
+          :key="tab.key"
+          :class="getTabClass(tab, index)"
+          @click="activeTab = tab.key"
+        >
+          {{ tab.name }}
+        </button>
       </div>
-      
     </div>
   </div>
 </template>
@@ -26,7 +29,7 @@
 <script>
 import LineChart from "../ui/LineChart";
 export default {
-  props: ['title', 'data'],
+  props: ["title", "content"],
   data() {
     return {
       activeTab: "month",
@@ -46,11 +49,11 @@ export default {
         {
           key: "day",
           name: "День",
-        }
+        },
       ],
       chartStyles: {
         position: "relative",
-        height: "300px"
+        height: "300px",
       },
       datacollection: {},
       options: {
@@ -62,9 +65,21 @@ export default {
   components: {
     LineChart,
   },
-  
   mounted() {
-    this.fillData();
+    if (!this.content) {
+      this.fillData();
+    } else {
+      this.datacollection = {
+        labels: this.content.cols,
+        datasets: [
+          {
+            label: this.title,
+            backgroundColor: "#A8DCFF",
+            data: this.content.vals,
+          },
+        ],
+      };
+    }
   },
   methods: {
     getTabClass(tab, index) {
@@ -82,12 +97,24 @@ export default {
     },
     fillData() {
       this.datacollection = {
-        labels: [this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt()],
+        labels: [
+          this.getRandomInt(),
+          this.getRandomInt(),
+          this.getRandomInt(),
+          this.getRandomInt(),
+          this.getRandomInt(),
+        ],
         datasets: [
           {
             label: this.title,
             backgroundColor: "#A8DCFF",
-            data: [this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt()],
+            data: [
+              this.getRandomInt(),
+              this.getRandomInt(),
+              this.getRandomInt(),
+              this.getRandomInt(),
+              this.getRandomInt(),
+            ],
           },
         ],
       };
@@ -102,6 +129,6 @@ export default {
 <style>
 .period-selector.active {
   @apply border-mainblue;
-  @apply border
+  @apply border;
 }
 </style>

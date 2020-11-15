@@ -17,4 +17,3 @@ accessLog:
 entryPoints:
   web:
     address: ":80"
-
