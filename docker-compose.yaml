@@ -165,7 +165,7 @@ services:
       org.label-schema.group: "monitoring"
 
   ml-runner:
-    image: docker.pkg.github.com/alewkinr/lyra/extra_trees_classifier:v1_test
+    image: docker.pkg.github.com/alewkinr/lyra/extra_trees_classifier:v4_test
     container_name: ml-runner
     restart: always
     environment:
