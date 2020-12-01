@@ -1,5 +1,4 @@
 version: '3.2'
-
 networks:
   monitor-net:
     driver: bridge
@@ -10,36 +9,39 @@ volumes:
 
 services:
   traefik:
-    image: traefik:v2.2
+    image: traefik:v2.3
     restart: always
     container_name: traefik
     ports:
       - "80:80"
       - "8080:8080"
     volumes:
-      - "./infra/traefik/traefik.yaml:/etc/traefik/traefik.yaml"
-      - "./infra/traefik/dynamic.yaml:/etc/traefik/dynamic/dynamic.yaml"
       - "/var/run/docker.sock:/var/run/docker.sock"
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
     networks:
       - monitor-net
 
-  # фронтенд
   ui:
     image: docker.pkg.github.com/alewkinr/lyra/ui
+    build:
+      context: ./front
+      dockerfile: Dockerfile
     restart: always
     container_name: ui
-    # ports:
-    #   - 8080
     networks:
       - monitor-net
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.ui.rule=Host(`*`)"
-      - "traefik.http.routers.ui.middlewares=cors@file"
+      - "traefik.http.routers.ui.rule=Host(`${HOSTNAME}`)"
+      - "traefik.http.services.ui.loadbalancer.server.port=80"
       - "traefik.http.routers.ui.entrypoints=web"
 
   postgres:
-    image: postgres
+    image: postgres:10.5
     restart: always
     container_name: postgres
     volumes:
@@ -53,75 +55,40 @@ services:
 
   auth:
     image: docker.pkg.github.com/alewkinr/lyra/auth:latest
+    build:
+      context: ./back/auth
+      dockerfile: Dockerfile
     volumes:
-    - ./back/auth/:/service
+      - "./back/auth/:/service"
     container_name: auth
     restart: always
-    expose:
-      - 8080
-    environment:
-      - NAMESPACE=production
-      - DOMAIN=localhost
-      - SERVER_NAME=auth
-      - SERVER_HOST=http://127.0.0.1:8080
-      - STACK_NAME=auth
-      - TRAEFIK_PUBLIC_NETWORK=monitor-net
-      - TRAEFIK_TAG=auth
-      - TRAEFIK_PUBLIC_TAG=monitor-net
-      - DOCKER_IMAGE_BACKEND=docker.pkg.github.com/alewkinr/lyra/backend
-      - BACKEND_CORS_ORIGINS=["http://localhost", "http://localhost:4200", "http://localhost:3000", "http://localhost:8080", "https://localhost", "https://localhost:4200", "https://localhost:3000", "https://localhost:8080", "http://dev.auth.com", "https://stag.auth.com", "https://auth.com", "http://local.dockertoolbox.tiangolo.com", "http://localhost.tiangolo.com"]
-      - PROJECT_NAME=auth
-      - SECRET_KEY=04ecee494832d84f03b1d59574043e84d0b03fe26dbd27c700e5dd60b5cae64f
-      - FIRST_SUPERUSER=admin@auth.com
-      - FIRST_SUPERUSER_PASSWORD=admin
-      - USERS_OPEN_REGISTRATION=False
-      - SENTRY_DSN=https://7cfd60f0751d4cc1b03bd2acd56ea5e4@o419007.ingest.sentry.io/5516233
-      - POSTGRES_SERVER=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
+    env_file:
+      - ./back/auth/.env
     networks:
       - monitor-net
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.auth.rule=Host(`*`) && PathPrefix(`/auth`)"
-      - "traefik.http.routers.auth.middlewares=cors@file,stripprefix@file"
-      - "traefik.http.routers.auth.entrypoints=web"
+      - "traefik.http.routers.auth.rule=Host(`${HOSTNAME}`) && PathPrefix(`/auth`)"
+      - "traefik.http.services.auth.loadbalancer.server.port=8080"
 
   # сервис моделей
   model:
     image: docker.pkg.github.com/alewkinr/lyra/model:latest
+    build:
+      context: ./back/model
+      dockerfile: Dockerfile
     volumes:
       - ./back/model/:/service
     container_name: model
     restart: always
-    expose:
-      - 8080
-    environment:
-      - DOMAIN=localhost
-      - SERVER_NAME=model
-      - SERVER_HOST=http://127.0.0.1:8080
-      - STACK_NAME=model
-      - TRAEFIK_PUBLIC_NETWORK=monitor-net
-      - TRAEFIK_TAG=model
-      - TRAEFIK_PUBLIC_TAG=monitor-net
-      - BACKEND_CORS_ORIGINS=["http://localhost", "http://localhost:4200", "http://localhost:3000", "http://localhost:8080", "https://localhost", "https://localhost:4200", "https://localhost:3000", "https://localhost:8080", "http://dev.model.com", "https://stag.model.com", "https://model.com", "http://local.dockertoolbox.tiangolo.com", "http://localhost.tiangolo.com"]
-      - PROJECT_NAME=model
-      - SECRET_KEY=04ecee494832d84f03b1d59574043e84d0b03fe26dbd27c700e5dd60b5cae64f
-      - FIRST_SUPERUSER=admin@model.com
-      - FIRST_SUPERUSER_PASSWORD=admin
-      - SENTRY_DSN=https://7cfd60f0751d4cc1b03bd2acd56ea5e4@o419007.ingest.sentry.io/5516233
-      - NAMESPACE=production
-      - POSTGRES_SERVER=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
+    env_file:
+      - ./back/model/.env
     networks:
       - monitor-net
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.model.rule=Host(`*`) && PathPrefix(`/model`)"
-      - "traefik.http.routers.model.middlewares=cors@file,stripprefix@file"
+      - "traefik.http.routers.model.rule=Host(`${HOSTNAME}`) && PathPrefix(`/model`)"
+      - "traefik.http.services.model.loadbalancer.server.port=8080"
       - "traefik.http.routers.model.entrypoints=web"
 
   # prometheus для метрик
@@ -147,8 +114,8 @@ services:
       - monitor-net
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.prometheus.rule=Host(`*`) && PathPrefix(`/prometheus`)"
-      - "traefik.http.routers.prometheus.middlewares=cors@file,stripprefix@file"
+      - "traefik.http.routers.prometheus.rule=Host(`${HOSTNAME}`) && PathPrefix(`/prometheus`)"
+      - "traefik.http.services.prometheus.loadbalancer.server.port=8080"
       - "traefik.http.routers.prometheus.entrypoints=web"
 
   # prometheus push-gateway для метрик
@@ -162,16 +129,15 @@ services:
       - "9091:9091"
     networks:
       - monitor-net
-    labels:
-      org.label-schema.group: "monitoring"
 
   ml-runner:
     image: docker.pkg.github.com/alewkinr/lyra/extra_trees_classifier:v4_test
+    build:
+      context: ./infra/runner
+      dockerfile: Dockerfile
     container_name: ml-runner
     restart: always
     environment:
       - LYRA_METRICS_HOST=pushgateway:9091
     networks:
       - monitor-net
-    labels:
-      org.label-schema.group: "monitoring"
